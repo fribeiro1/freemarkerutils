@@ -22,25 +22,25 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.utility.DeepUnwrap;
 
-public final class DeserializeTemplateMethodModel implements
+public class DeserializeTemplateMethodModel implements
 		TemplateMethodModelEx {
 
 	@SuppressWarnings("rawtypes")
-	public Object exec(final List arguments) throws TemplateModelException {
+	public Object exec(List arguments) throws TemplateModelException {
 		Object result = null;
 
 		if (arguments.size() < 1)
 			throw new IllegalArgumentException("The argument is required");
 
-		final Object model = arguments.get(0);
+		Object model = arguments.get(0);
 
 		if (model instanceof SimpleSequence) {
-			final List list = (List) DeepUnwrap.unwrap((TemplateModel) model);
+			List list = (List) DeepUnwrap.unwrap((TemplateModel) model);
 
-			final byte[] arr = new byte[list.size()];
+			byte[] arr = new byte[list.size()];
 
 			for (int i = 0; i < arr.length; i++) {
-				final Object b = list.get(i);
+				Object b = list.get(i);
 
 				if (!(b instanceof Byte))
 					throw new IllegalArgumentException(
@@ -50,18 +50,18 @@ public final class DeserializeTemplateMethodModel implements
 			}
 
 			try {
-				final ObjectInputStream in = new ObjectInputStream(
+				ObjectInputStream in = new ObjectInputStream(
 						new ByteArrayInputStream(arr));
 
 				result = in.readObject();
 
 				in.close();
-			} catch (final Exception e) {
+			} catch (Exception e) {
 				throw new TemplateModelException("Can't deserialize object", e);
 			}
 
 		} else if (model instanceof ArrayModel) {
-			final Object arr = ((ArrayModel) model)
+			Object arr = ((ArrayModel) model)
 					.getAdaptedObject(Object.class);
 
 			if (!(arr instanceof byte[]))
@@ -69,13 +69,13 @@ public final class DeserializeTemplateMethodModel implements
 						"The argument must be an array of bytes");
 
 			try {
-				final ObjectInputStream in = new ObjectInputStream(
+				ObjectInputStream in = new ObjectInputStream(
 						new ByteArrayInputStream((byte[]) arr));
 
 				result = in.readObject();
 
 				in.close();
-			} catch (final Exception e) {
+			} catch (Exception e) {
 				throw new TemplateModelException("Can't deserialize object", e);
 			}
 
